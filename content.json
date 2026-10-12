@@ -35,7 +35,7 @@
       "author": { "en": "Bing Sun · First author", "zh": "孙冰 · 第一作者" },
       "description": { "en": "Uses point-level reassociation with historical point-cloud segments and Kalman filtering to maintain dynamic-object tracking through occlusions, missed detections, and identity switches. Predicted states and covariances form uncertainty sectors that translate dynamic collision risk into differentiable trajectory costs.", "zh": "针对遮挡、漏检和 ID 切换，设计基于历史点云片段的点级重关联机制，结合卡尔曼滤波进行目标状态估计与协方差传播。基于预测状态与协方差构建不确定性扇区，将动态碰撞风险转化为可微轨迹代价。" },
       "result": { "en": "Evaluated in complex dynamic environments through simulation and experiments on an omnidirectional mobile robot.", "zh": "在复杂动态环境中开展仿真及全向移动机器人实验，验证感知与规划联合方法的有效性。" },
-      "links": { "paper": null, "code": null, "video": null }
+      "links": { "paper": "https://arxiv.org/abs/2609.29419", "code": null, "video": null }
     }
   ],
   "projects": [
