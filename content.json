@@ -6,7 +6,7 @@
   "role": { "en": "M.Sc. Student · Dalian University of Technology", "zh": "硕士研究生 · 大连理工大学" },
   "interests": { "en": "Robot Navigation · Motion Planning · Vision–Language–Action", "zh": "机器人导航 · 运动规划 · 视觉语言动作模型" },
   "bio": [
-    { "en": "Hi, I'm Bing Sun, a master's student at Dalian University of Technology, with graduation expected in June 2027. I received my bachelor's degree from Dalian University in 2024.", "zh": "你好，我是孙冰，目前在大连理工大学攻读硕士学位，预计于 2027 年 6 月毕业。本科毕业于大连大学（2024 年）。" },
+    { "en": "Hi, I'm Bing Sun, a master's student in the IIAU Lab at Dalian University of Technology, with graduation expected in June 2027.", "zh": "你好，我是孙冰，目前在大连理工大学 IIAU Lab 攻读硕士学位，预计于 2027 年 6 月毕业。" },
     { "en": "My research focuses on autonomous robot navigation, motion planning, and task understanding and action generation with vision–language–action (VLA) models. I work on connecting perception, planning, and learned control policies for real robots.", "zh": "我的研究方向是机器人自主导航、运动规划，以及基于视觉语言动作（VLA）模型的任务理解与动作生成，关注感知、规划与学习控制策略在真实机器人上的融合与应用。" },
     { "en": "During my internship at RoboScience, I worked on semantic mapping and navigation, robotic parcel sorting, and long-horizon tea preparation. I also participated in multi-agent research through a Tsinghua University exchange and an NSFC major project.", "zh": "在 RoboScience 实习期间，我参与了语义建图与自主导航、机器人快递分拣及长程茶艺操作。在清华大学交流及国家自然科学基金重大项目中，我参与了多智能体协同对抗研究。" }
   ],
