@@ -377,10 +377,35 @@
         "zh": "支持麦克纳姆轮、阿克曼轮、全向轮移动机器人及无人机，在室内坡道和室外森林环境中完成部署与实验验证。"
       },
       "links": {
-        "code": null,
+        "code": "https://github.com/Bling-sun/RobotPerception",
         "video": null
       },
-      "media": []
+      "media": [
+        {
+          "type": "image",
+          "src": "assets/demos/multi-agent-outdoor.png",
+          "alt": {
+            "en": "Outdoor robot perception and motion planning visualization",
+            "zh": "户外机器人感知与运动规划可视化"
+          },
+          "caption": {
+            "en": "Outdoor perception & planning",
+            "zh": "户外感知与规划"
+          }
+        },
+        {
+          "type": "image",
+          "src": "assets/demos/multi-agent-platform.jpg",
+          "alt": {
+            "en": "Multiple mobile robots in an indoor experimental arena",
+            "zh": "室内实验场地中的多台移动机器人"
+          },
+          "caption": {
+            "en": "Multi-robot experimental platform",
+            "zh": "多机器人实验平台"
+          }
+        }
+      ]
     }
   ],
   "awards": [

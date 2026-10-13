@@ -7,6 +7,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const content = JSON.parse(await readFile(path.join(root, 'content.json'), 'utf8'));
 const base = 'https://bling-sun.github.io/MyHomepage/';
 const styleVersion = createHash('sha256').update(await readFile(path.join(root, 'assets/styles.css'))).digest('hex').slice(0, 12);
+const scriptVersion = createHash('sha256').update(await readFile(path.join(root, 'assets/main.js'))).digest('hex').slice(0, 12);
 const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const icons = {
   github: '<path d="M9 19c-4.3 1.3-4.3-2.2-6-2.7M15 22v-3.9a3.4 3.4 0 0 0-1-2.7c3.3-.4 6.8-1.6 6.8-7.3a5.7 5.7 0 0 0-1.5-4A5.3 5.3 0 0 0 19.2.2S18-.2 15 1.7a13.5 13.5 0 0 0-7 0C5-.2 3.8.2 3.8.2a5.3 5.3 0 0 0-.1 3.9 5.7 5.7 0 0 0-1.5 4c0 5.7 3.5 6.9 6.8 7.3a3.4 3.4 0 0 0-1 2.7V22"/>',
@@ -38,7 +39,7 @@ function build(cv = false) {
   const materialLinks = (entry, key) => {
     const labels = { paper: ['Paper', '论文'], code: ['Code', '代码'], video: ['Video', '视频'] };
     const actual = Object.entries(entry.links).filter(([, url]) => url);
-    if (!actual.length) return ui('Materials forthcoming', '资料待发布', `${key}.forthcoming`, 'span', ' class="pending"');
+    if (!actual.length) return entry.media?.length && !entry.acronym ? '' : ui('Materials forthcoming', '资料待发布', `${key}.forthcoming`, 'span', ' class="pending"');
     return actual.map(([type, url]) => link(url, ui(...labels[type], `${key}.link.${type}`), ' target="_blank" rel="noopener noreferrer"')).join('<span aria-hidden="true" class="link-divider">/</span>');
   };
   const media = (entry, key) => {
@@ -90,9 +91,9 @@ function build(cv = false) {
   const interests = text(content.interests, 'interests', 'p', ' class="interests"');
   const nav = [['projects', 'Projects', '项目'], ['papers', 'Papers', '论文'], ['awards', 'Awards', '竞赛'], ['skills', 'Skills', '技能']];
   const toolbar = `<div class="toolbar" aria-label="Links and display options">
-    ${cv ? link('./', ui('Homepage', '主页', 'ui.home'), ' class="tool-link"') : link('cv.html', `${icon('cv')}${ui('CV', '简历', 'ui.cv')}`, ' class="tool-link" id="cv-link"')}
+    ${cv ? link('./', ui('Homepage', '主页', 'ui.home'), ' class="tool-link"') : link('assets/Bing-Sun-CV.pdf', `${icon('cv')}${ui('Download CV', '下载简历', 'ui.cv')}`, ' class="tool-link" id="cv-download" download="Bing-Sun-CV.pdf"')}
     ${link(content.github, `${icon('github')}<span>GitHub</span>`, ' class="tool-link" target="_blank" rel="noopener noreferrer"')}
-    ${link(`mailto:${content.email}`, `${icon('mail')}${ui('Email', '邮箱', 'ui.email')}`, ' class="tool-link"')}
+    ${link(`mailto:${content.email}`, `${icon('mail')}${ui('Email', '邮箱', 'ui.email')}`, ' class="tool-link" data-email-contact aria-haspopup="dialog"')}
     <span class="toolbar-divider" aria-hidden="true"></span>
     <button class="tool-link" id="language-toggle" type="button" aria-label="切换为中文">${icon('translate')}<span id="language-label">中文</span></button>
     <button class="tool-link theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme">${icon('theme')}</button>
@@ -116,7 +117,7 @@ function build(cv = false) {
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/styles.css?v=${styleVersion}">
   <title>Bing Sun${cv ? ' — CV' : ' | Robotics & Embodied AI'}</title>
-  <script src="assets/main.js" defer></script>
+  <script src="assets/main.js?v=${scriptVersion}" defer></script>
   <script type="application/ld+json">${JSON.stringify(person).replace(/</g, '\\u003c')}</script>
 </head>
 <body${cv ? ' class="cv-page"' : ''}>
@@ -140,7 +141,15 @@ function build(cv = false) {
     ${section('awards', 'Competition & Awards', '竞赛与荣誉', awards)}
     ${section('skills', 'Technical Skills', '专业技能', skills)}
   </main>
-  <footer class="site-footer"><div><span>© 2026 </span>${text(content.name, 'footer.name')}<span class="footer-dot" aria-hidden="true">·</span>${link(`mailto:${content.email}`, escape(content.email))}</div><div class="updated">${ui('Last updated: October 2026', '最近更新：2026 年 10 月', 'footer.updated')}</div></footer>
+  <footer class="site-footer"><div><span>© 2026 </span>${text(content.name, 'footer.name')}<span class="footer-dot" aria-hidden="true">·</span>${link(`mailto:${content.email}`, escape(content.email), ' data-email-contact aria-haspopup="dialog"')}</div><div class="updated">${ui('Last updated: October 2026', '最近更新：2026 年 10 月', 'footer.updated')}</div></footer>
+  <dialog class="email-dialog" id="email-contact" aria-labelledby="email-title">
+    <div class="email-heading">${ui('Get in touch', '联系我', 'contact.title', 'h2', ' id="email-title"')}<form method="dialog"><button class="tool-link" type="submit">${ui('Close', '关闭', 'contact.close')}</button></form></div>
+    ${ui('Copy my address or open your email app to write to me.', '复制邮箱地址，或打开邮件应用给我写信。', 'contact.description', 'p')}
+    ${ui('Email address', '邮箱地址', 'contact.address', 'label', ' for="email-address"')}
+    <input id="email-address" type="text" value="${escape(content.email)}" readonly spellcheck="false">
+    <div class="email-actions"><button class="tool-link" type="button" id="copy-email">${ui('Copy email', '复制邮箱', 'contact.copy')}</button>${link(`mailto:${content.email}`, ui('Open email app', '打开邮件应用', 'contact.open'), ' class="tool-link"')}</div>
+    <p class="email-status" id="email-status" role="status" aria-live="polite"></p>
+  </dialog>
   <script id="translations" type="application/json">${JSON.stringify(translations).replace(/</g, '\\u003c')}</script>
 </body>
 </html>

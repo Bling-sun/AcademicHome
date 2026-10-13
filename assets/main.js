@@ -21,8 +21,6 @@
     document.getElementById('language-label').textContent = language === 'en' ? '中文' : 'EN';
     languageButton.setAttribute('aria-label', language === 'en' ? '切换为中文' : 'Switch to English');
     document.title = language === 'zh' ? `孙冰${document.body.classList.contains('cv-page') ? ' — 简历' : ' | 机器人与具身智能'}` : `Bing Sun${document.body.classList.contains('cv-page') ? ' — CV' : ' | Robotics & Embodied AI'}`;
-    const cvLink = document.getElementById('cv-link');
-    if (cvLink) cvLink.href = `cv.html?lang=${language}`;
     renderTheme();
   }
 
@@ -50,6 +48,33 @@
   });
   document.getElementById('print-cv')?.addEventListener('click', () => window.print());
   renderLanguage();
+
+  const emailDialog = document.getElementById('email-contact');
+  const emailAddress = document.getElementById('email-address');
+  const emailStatus = document.getElementById('email-status');
+  for (const link of document.querySelectorAll('[data-email-contact]')) {
+    link.addEventListener('click', event => {
+      if (typeof emailDialog?.showModal !== 'function') return;
+      event.preventDefault();
+      emailStatus.textContent = '';
+      emailDialog.showModal();
+    });
+  }
+  document.getElementById('copy-email')?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(emailAddress.value);
+      emailStatus.textContent = language === 'zh' ? '已复制邮箱地址。' : 'Email address copied.';
+    } catch {
+      emailAddress.focus();
+      emailAddress.select();
+      emailStatus.textContent = language === 'zh' ? '请复制上方已选中的邮箱地址。' : 'Please copy the selected email address above.';
+    }
+  });
+  emailDialog?.addEventListener('click', event => {
+    if (event.target !== emailDialog) return;
+    const bounds = emailDialog.getBoundingClientRect();
+    if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) emailDialog.close();
+  });
 
   // Galleries request a video only after an explicit play action.
   const demoLabel = (button, key) => {
