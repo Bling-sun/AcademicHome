@@ -4,7 +4,7 @@ import path from 'node:path';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const content = JSON.parse(await readFile(path.join(root, 'content.json'), 'utf8'));
-const base = 'https://bling-sun.github.io/AcademicHome/';
+const base = 'https://bling-sun.github.io/MyHomepage/';
 const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const icons = {
   github: '<path d="M9 19c-4.3 1.3-4.3-2.2-6-2.7M15 22v-3.9a3.4 3.4 0 0 0-1-2.7c3.3-.4 6.8-1.6 6.8-7.3a5.7 5.7 0 0 0-1.5-4A5.3 5.3 0 0 0 19.2.2S18-.2 15 1.7a13.5 13.5 0 0 0-7 0C5-.2 3.8.2 3.8.2a5.3 5.3 0 0 0-.1 3.9 5.7 5.7 0 0 0-1.5 4c0 5.7 3.5 6.9 6.8 7.3a3.4 3.4 0 0 0-1 2.7V22"/>',
@@ -36,28 +36,47 @@ function build(cv = false) {
     if (!actual.length) return ui('Materials forthcoming', '资料待发布', `${key}.forthcoming`, 'span', ' class="pending"');
     return actual.map(([type, url]) => link(url, ui(...labels[type], `${key}.link.${type}`), ' target="_blank" rel="noopener noreferrer"')).join('<span aria-hidden="true" class="link-divider">/</span>');
   };
+  const media = (entry, key) => {
+    if (cv || !entry.media?.length) return '';
+    return `<div class="media-gallery" aria-label="${escape(entry.acronym || entry.id)} demos">${entry.media.map((item, i) => {
+      const altKey = `${key}.media.${i}.alt`;
+      translations[altKey] = item.alt || entry.title;
+      const alt = escape(translations[altKey].en);
+      const video = item.type === 'video';
+      const gif = item.type === 'gif';
+      return `<figure class="entry-media" ${i ? 'hidden' : ''}>
+        <div class="media-stage">
+        ${video ? `<video playsinline loop preload="none" data-src="${escape(item.src)}" poster="${escape(item.poster || '')}" aria-label="${alt}" data-i18n-alt="${altKey}" width="960" height="540"></video>` : `<img ${gif ? `data-src="${escape(item.src)}" ${item.poster ? `src="${escape(item.poster)}"` : 'hidden'}` : `src="${escape(item.src)}"`} alt="${alt}" data-i18n-alt="${altKey}" loading="lazy" decoding="async" width="960" height="540">`}
+        ${video || gif ? `<button class="demo-toggle" type="button" data-kind="${item.type}" ${item.poster ? `data-poster="${escape(item.poster)}"` : ''} aria-pressed="false"><span class="play-icon" aria-hidden="true">▶</span><span data-demo-text>${ui('Play demo', '播放演示', `${key}.media.${i}.play`)}</span></button>` : ''}
+        </div>${item.caption ? text(item.caption, `${key}.media.${i}.caption`, 'figcaption') : ''}
+      </figure>`;
+    }).join('')}${entry.media.length > 1 ? `<div class="media-selector" role="group" aria-label="Demo scenes">${entry.media.map((item, i) => `<button type="button" data-media-index="${i}" aria-pressed="${i === 0}">${text(item.caption || item.alt, `${key}.media.${i}.selector`)}</button>`).join('')}</div>` : ''}</div>`;
+  };
   const article = (entry, type, index) => {
     const key = `${type}.${index}`;
     const publication = type === 'paper';
     const head = `<div class="entry-heading">${text(entry.title, `${key}.title`, 'h3')}
       <div class="entry-meta">${publication ? `<span class="venue">${escape(entry.venue)}</span>${text(entry.status, `${key}.status`, 'span', ` class="status ${entry.statusType}"`)}` : text(entry.date, `${key}.date`, 'span', ' class="date"')}</div></div>`;
-    const details = `<div class="entry-body">
-      <div class="attribution">${publication ? authorText(entry.author, `${key}.attribution`) : text(entry.affiliation, `${key}.attribution`)}${publication ? text(entry.date, `${key}.date`, 'span', ' class="research-date"') : ''}</div>
-      ${text(entry.description, `${key}.description`, 'p')}
-      ${text(entry.result, `${key}.result`, 'p', ' class="result"')}
-      <div class="entry-footer">${!publication ? `<div class="tags">${entry.tags.map(tag => `<span>${escape(tag)}</span>`).join('')}</div>` : `<span class="acronym">${escape(entry.acronym)}</span>`}<div class="material-links">${materialLinks(entry, key)}</div></div>
-    </div>`;
-    return cv ? `<article class="entry" id="${entry.id}">${head}${details}</article>` : `<details class="entry" id="${entry.id}" open><summary>${head}<span class="chevron" aria-hidden="true"></span></summary>${details}</details>`;
+    const description = text(entry.description, `${key}.description`, 'p');
+    return `<article class="entry ${publication ? 'paper' : 'project'}${entry.media?.length ? ' has-media' : ''}" id="${entry.id}">
+      ${media(entry, key)}<div class="entry-content">
+      <div class="entry-kicker">${publication ? escape(entry.acronym) : `<span class="project-number">${String(index + 1).padStart(2, '0')}</span><div class="tags">${entry.tags.map(tag => `<span>${escape(tag)}</span>`).join('')}</div>`}</div>
+      ${head}
+      <div class="attribution">${publication ? authorText(entry.author, `${key}.attribution`) : text(entry.affiliation, `${key}.attribution`)}</div>
+      <div class="entry-body">${text(entry.result, `${key}.result`, 'p', ' class="result"')}
+      ${cv ? description : `<details class="project-details"><summary>${ui('Method & details', '方法与细节', `${key}.details`)}<span class="detail-plus" aria-hidden="true">+</span></summary>${description}</details>`}</div>
+      <div class="entry-footer"><div class="material-links">${materialLinks(entry, key)}</div>${publication ? text(entry.date, `${key}.date`, 'span', ' class="date"') : ''}</div>
+      </div></article>`;
   };
+
   const section = (id, en, zh, body, count) => `<section id="${id}" aria-labelledby="${id}-heading"><div class="section-heading">${ui(en, zh, `heading.${id}`, 'h2', ` id="${id}-heading"`)}${count ? `<span class="section-count">${String(count).padStart(2, '0')}</span>` : ''}</div>${body}</section>`;
   const bio = content.bio.map((p, i) => text(p, `bio.${i}`, 'p')).join('');
-  const education = `<div class="education-list">${content.education.map((entry, i) => `<article class="education-entry"><div class="entry-heading">${text(entry.school, `education.${i}.school`, 'h3')}${text(entry.date, `education.${i}.date`, 'span', ' class="date"')}</div>${text(entry.degree, `education.${i}.degree`, 'p', ' class="degree"')}${text(entry.description, `education.${i}.description`, 'p')}</article>`).join('')}</div>`;
   const awards = `<ul class="awards-list">${content.awards.map((award, i) => text(award, `award.${i}`, 'li')).join('')}</ul>`;
   const skills = `<dl class="skills-list">${content.skills.map((skill, i) => `<div>${text(skill.label, `skill.${i}.label`, 'dt')}<dd>${escape(skill.detail)}</dd></div>`).join('')}</dl>`;
   const name = text(content.name, 'name', 'h1');
   const role = text(content.role, 'role', 'p', ' class="role"');
   const interests = text(content.interests, 'interests', 'p', ' class="interests"');
-  const nav = [['papers', 'Papers', '论文'], ['projects', 'Projects', '项目'], ['education', 'Education', '教育'], ['awards', 'Awards', '竞赛'], ['skills', 'Skills', '技能']];
+  const nav = [['projects', 'Projects', '项目'], ['papers', 'Papers', '论文'], ['awards', 'Awards', '竞赛'], ['skills', 'Skills', '技能']];
   const toolbar = `<div class="toolbar" aria-label="Links and display options">
     ${cv ? link('./', ui('Homepage', '主页', 'ui.home'), ' class="tool-link"') : link('cv.html', `${icon('cv')}${ui('CV', '简历', 'ui.cv')}`, ' class="tool-link" id="cv-link"')}
     ${link(content.github, `${icon('github')}<span>GitHub</span>`, ' class="tool-link" target="_blank" rel="noopener noreferrer"')}
@@ -92,16 +111,20 @@ function build(cv = false) {
   ${ui('Skip to content', '跳转到内容', 'ui.skip', 'a', ' class="skip-link" href="#main"')}
   <header class="hero">
     <div class="hero-inner">
-      <img class="portrait" src="assets/portrait.jpg" alt="Bing Sun" width="112" height="112">
-      ${name}${role}${interests}${toolbar}
+      <div class="hero-copy">
+        ${ui('ROBOTICS / EMBODIED AI', '机器人 / 具身智能', 'hero.eyebrow', 'p', ' class="eyebrow"')}
+        ${name}${role}${interests}${toolbar}
+        ${!cv ? link('#projects', `${ui('Explore my work', '探索我的项目', 'hero.explore')}<span aria-hidden="true">↗</span>`, ' class="hero-cta"') : ''}
+      </div>
+      <div class="portrait-wrap"><img class="portrait" src="assets/portrait.jpg" alt="Bing Sun" width="240" height="288"><span class="portrait-caption">DALIAN · CHINA</span></div>
+
     </div>
   </header>
   ${!cv ? `<nav class="section-nav" aria-label="Sections">${nav.map(([id, en, zh]) => link(`#${id}`, ui(en, zh, `nav.${id}`))).join('')}</nav>` : ''}
   <main class="container" id="main">
     <section class="profile" aria-labelledby="about-heading">${ui(cv ? 'Profile' : 'About Me', '个人简介', 'heading.about', 'h2', ' id="about-heading"')}${bio}</section>
-    ${section('papers', 'Papers', '论文', content.papers.map((p, i) => article(p, 'paper', i)).join('') + ui('Titles summarize the research described in my CV. Full citations and links will be added when the materials are public.', '标题为简历中研究内容的概述，完整文献信息及链接将在资料公开后补充。', 'papers.note', 'p', ' class="section-note"'), content.papers.length)}
-    ${section('projects', 'Projects', '项目', content.projects.map((p, i) => article(p, 'project', i)).join(''), content.projects.length)}
-    ${section('education', 'Education', '教育经历', education)}
+    ${section('projects', 'Projects', '项目', `<div class="project-grid">${content.projects.map((p, i) => article(p, 'project', i)).join('')}</div>`, content.projects.length)}
+    ${section('papers', 'Papers', '论文', content.papers.map((p, i) => article(p, 'paper', i)).join('') + ui('Additional research materials will be linked as they become public.', '更多研究资料将在公开后补充链接。', 'papers.note', 'p', ' class="section-note"'), content.papers.length)}
     ${section('awards', 'Competition & Awards', '竞赛与荣誉', awards)}
     ${section('skills', 'Technical Skills', '专业技能', skills)}
   </main>

@@ -50,4 +50,97 @@
   });
   document.getElementById('print-cv')?.addEventListener('click', () => window.print());
   renderLanguage();
+
+  // Galleries request a video only after an explicit play action.
+  const demoLabel = (button, key) => {
+    const labels = {play: ['Play demo', '播放演示'], stop: ['Stop demo', '停止演示'], retry: ['Retry demo', '重试播放']};
+    const target = button.querySelector('[data-demo-text]');
+    if (target) target.textContent = labels[key][language === 'zh' ? 1 : 0];
+    button.dataset.label = key;
+  };
+  const stopDemo = figure => {
+    const video = figure.querySelector('video');
+    const button = figure.querySelector('.demo-toggle');
+    if (video) video.pause();
+    if (button?.dataset.kind === 'gif' && button.dataset.playing === 'true') {
+      const img = figure.querySelector('img');
+      img.removeAttribute('src');
+      if (button.dataset.poster) img.src = button.dataset.poster;
+      else img.hidden = true;
+      button.dataset.playing = 'false';
+      button.setAttribute('aria-pressed', 'false');
+      demoLabel(button, 'play');
+    }
+  };
+  for (const gallery of document.querySelectorAll('.media-gallery')) {
+    const figures = [...gallery.querySelectorAll('.entry-media')];
+    for (const selector of gallery.querySelectorAll('[data-media-index]')) {
+      selector.addEventListener('click', () => {
+        figures.forEach((figure, index) => {
+          if (index !== Number(selector.dataset.mediaIndex)) stopDemo(figure);
+          figure.hidden = index !== Number(selector.dataset.mediaIndex);
+        });
+        gallery.querySelectorAll('[data-media-index]').forEach(button => button.setAttribute('aria-pressed', String(button === selector)));
+      });
+    }
+    for (const figure of figures) {
+      const button = figure.querySelector('.demo-toggle');
+      if (!button) continue;
+      const video = figure.querySelector('video');
+      const image = figure.querySelector('img');
+      const onError = () => {
+        button.dataset.playing = 'false';
+        button.setAttribute('aria-pressed', 'false');
+        demoLabel(button, 'retry');
+      };
+      if (video) {
+        video.addEventListener('error', onError);
+        video.addEventListener('play', () => {
+          document.querySelectorAll('video').forEach(other => { if (other !== video) other.pause(); });
+          button.dataset.playing = 'true';
+        });
+      } else image?.addEventListener('error', onError);
+      button.addEventListener('click', async () => {
+        if (video) {
+          if (!video.getAttribute('src')) { video.src = video.dataset.src; video.load(); }
+          try { video.controls = true; await video.play(); button.dataset.playing = 'true'; } catch { onError(); }
+        } else if (button.dataset.playing === 'true') stopDemo(figure);
+        else { image.src = image.dataset.src; image.hidden = false; button.dataset.playing = 'true'; button.setAttribute('aria-pressed', 'true'); demoLabel(button, 'stop'); }
+      });
+    }
+  }
+  const updateMediaLanguage = () => {
+    for (const element of document.querySelectorAll('[data-i18n-alt]')) {
+      const label = translations[element.dataset.i18nAlt]?.[language];
+      if (label) element.setAttribute(element.tagName === 'IMG' ? 'alt' : 'aria-label', label);
+    }
+    document.querySelectorAll('.demo-toggle').forEach(button => demoLabel(button, button.dataset.label || 'play'));
+  };
+  languageButton.addEventListener('click', updateMediaLanguage);
+  updateMediaLanguage();
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) document.querySelectorAll('.entry-media').forEach(stopDemo);
+  });
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      for (const entry of entries) if (!entry.isIntersecting) entry.target.pause();
+    }, {threshold: 0.05});
+    document.querySelectorAll('video').forEach(video => observer.observe(video));
+  }
+  const navLinks = [...document.querySelectorAll('.section-nav a')];
+  const sections = navLinks.map(link => document.querySelector(link.getAttribute('href')));
+  let scrollPending = false;
+  const updateSection = () => {
+    scrollPending = false;
+    let active = -1;
+    sections.forEach((section, index) => { if (section.getBoundingClientRect().top <= 150) active = index; });
+    navLinks.forEach((link, index) => { if (index === active) link.setAttribute('aria-current', 'location'); else link.removeAttribute('aria-current'); });
+  };
+  window.addEventListener('scroll', () => { if (!scrollPending) { scrollPending = true; requestAnimationFrame(updateSection); } }, {passive:true});
+  updateSection();
+  let printDetails = [];
+  window.addEventListener('beforeprint', () => { printDetails = [...document.querySelectorAll('details:not([open])')]; printDetails.forEach(detail => { detail.open = true; }); });
+  window.addEventListener('afterprint', () => { printDetails.forEach(detail => { detail.open = false; }); });
+
+
 })();
