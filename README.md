@@ -56,7 +56,7 @@ The public CV page contains academic information and email contact. The source D
 
 ## Demo galleries
 
-Projects and papers accept a `media` array. An empty array renders a text card without blank placeholders. To add a scene, put files in `assets/demos/` and add:
+Projects and papers accept a `media` array. An empty array reserves a media panel on the right with a bilingual placeholder. On desktop, projects and papers share the same text-left, media-right layout; on mobile, the media panel follows the text. To add a scene, put files in `assets/demos/` and add:
 
 ```json
 "media": [{

@@ -37,7 +37,14 @@ function build(cv = false) {
     return actual.map(([type, url]) => link(url, ui(...labels[type], `${key}.link.${type}`), ' target="_blank" rel="noopener noreferrer"')).join('<span aria-hidden="true" class="link-divider">/</span>');
   };
   const media = (entry, key) => {
-    if (cv || !entry.media?.length) return '';
+    if (cv) return '';
+    if (!entry.media?.length) return `<div class="media-gallery media-placeholder">
+      <div class="placeholder-stage">
+        <svg aria-hidden="true" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="8" width="38" height="32" rx="5"/><circle cx="17" cy="19" r="3"/><path d="m6 34 11-9 8 7 7-10 10 12"/></svg>
+        ${ui('Demo coming soon', '演示素材待补充', `${key}.media.placeholder`, 'p')}
+        ${ui('Images / Video', '图片 / 视频', `${key}.media.formats`, 'span')}
+      </div>
+    </div>`;
     return `<div class="media-gallery" aria-label="${escape(entry.acronym || entry.id)} demos">${entry.media.map((item, i) => {
       const altKey = `${key}.media.${i}.alt`;
       translations[altKey] = item.alt || entry.title;
@@ -58,15 +65,15 @@ function build(cv = false) {
     const head = `<div class="entry-heading">${text(entry.title, `${key}.title`, 'h3')}
       <div class="entry-meta">${publication ? `<span class="venue">${escape(entry.venue)}</span>${text(entry.status, `${key}.status`, 'span', ` class="status ${entry.statusType}"`)}` : text(entry.date, `${key}.date`, 'span', ' class="date"')}</div></div>`;
     const description = text(entry.description, `${key}.description`, 'p');
-    return `<article class="entry ${publication ? 'paper' : 'project'}${entry.media?.length ? ' has-media' : ''}" id="${entry.id}">
-      ${media(entry, key)}<div class="entry-content">
+    return `<article class="entry ${publication ? 'paper' : 'project'}${!cv ? ' has-media' : ''}" id="${entry.id}">
+      <div class="entry-content">
       <div class="entry-kicker">${publication ? escape(entry.acronym) : `<span class="project-number">${String(index + 1).padStart(2, '0')}</span><div class="tags">${entry.tags.map(tag => `<span>${escape(tag)}</span>`).join('')}</div>`}</div>
       ${head}
       <div class="attribution">${publication ? authorText(entry.author, `${key}.attribution`) : text(entry.affiliation, `${key}.attribution`)}</div>
       <div class="entry-body">${text(entry.result, `${key}.result`, 'p', ' class="result"')}
       ${cv ? description : `<details class="project-details"><summary>${ui('Method & details', '方法与细节', `${key}.details`)}<span class="detail-plus" aria-hidden="true">+</span></summary>${description}</details>`}</div>
       <div class="entry-footer"><div class="material-links">${materialLinks(entry, key)}</div>${publication ? text(entry.date, `${key}.date`, 'span', ' class="date"') : ''}</div>
-      </div></article>`;
+      </div>${media(entry, key)}</article>`;
   };
 
   const section = (id, en, zh, body, count) => `<section id="${id}" aria-labelledby="${id}-heading"><div class="section-heading">${ui(en, zh, `heading.${id}`, 'h2', ` id="${id}-heading"`)}${count ? `<span class="section-count">${String(count).padStart(2, '0')}</span>` : ''}</div>${body}</section>`;
@@ -116,7 +123,7 @@ function build(cv = false) {
         ${name}${role}${interests}${toolbar}
         ${!cv ? link('#projects', `${ui('Explore my work', '探索我的项目', 'hero.explore')}<span aria-hidden="true">↗</span>`, ' class="hero-cta"') : ''}
       </div>
-      <div class="portrait-wrap"><img class="portrait" src="assets/portrait.jpg" alt="Bing Sun" width="240" height="288"><span class="portrait-caption">DALIAN · CHINA</span></div>
+      <div class="portrait-wrap"><img class="portrait" src="assets/portrait.jpg" alt="Bing Sun" width="128" height="154"><span class="portrait-caption">DALIAN · CHINA</span></div>
 
     </div>
   </header>
