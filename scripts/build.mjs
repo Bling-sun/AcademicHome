@@ -24,6 +24,11 @@ function build(cv = false) {
     return `<${tag} data-i18n="${key}"${attrs}>${escape(value.en)}</${tag}>`;
   };
   const ui = (en, zh, key, tag = 'span', attrs = '') => text({ en, zh }, key, tag, attrs);
+  const authorText = (value, key) => {
+    if (!['en', 'zh'].every(lang => value[lang].startsWith(content.name[lang]))) return text(value, key);
+    const remaining = Object.fromEntries(['en', 'zh'].map(lang => [lang, value[lang].slice(content.name[lang].length)]));
+    return `<span class="authors">${text(content.name, `${key}.name`, 'strong')}${text(remaining, `${key}.remaining`)}</span>`;
+  };
   const link = (url, label, attrs = '') => `<a href="${escape(url)}"${attrs}>${label}</a>`;
   const materialLinks = (entry, key) => {
     const labels = { paper: ['Paper', '论文'], code: ['Code', '代码'], video: ['Video', '视频'] };
@@ -37,7 +42,7 @@ function build(cv = false) {
     const head = `<div class="entry-heading">${text(entry.title, `${key}.title`, 'h3')}
       <div class="entry-meta">${publication ? `<span class="venue">${escape(entry.venue)}</span>${text(entry.status, `${key}.status`, 'span', ` class="status ${entry.statusType}"`)}` : text(entry.date, `${key}.date`, 'span', ' class="date"')}</div></div>`;
     const details = `<div class="entry-body">
-      <div class="attribution">${text(publication ? entry.author : entry.affiliation, `${key}.attribution`)}${publication ? text(entry.date, `${key}.date`, 'span', ' class="research-date"') : ''}</div>
+      <div class="attribution">${publication ? authorText(entry.author, `${key}.attribution`) : text(entry.affiliation, `${key}.attribution`)}${publication ? text(entry.date, `${key}.date`, 'span', ' class="research-date"') : ''}</div>
       ${text(entry.description, `${key}.description`, 'p')}
       ${text(entry.result, `${key}.result`, 'p', ' class="result"')}
       <div class="entry-footer">${!publication ? `<div class="tags">${entry.tags.map(tag => `<span>${escape(tag)}</span>`).join('')}</div>` : `<span class="acronym">${escape(entry.acronym)}</span>`}<div class="material-links">${materialLinks(entry, key)}</div></div>
