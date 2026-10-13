@@ -49,6 +49,10 @@ h2 { margin:0; font-size:28px; line-height:1.3; font-weight:600; letter-spacing:
 .project-number { font-size:14px; color:var(--muted); }
 .tags { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; letter-spacing:0; font-family:inherit; }
 .tags span { font-size:12px; font-weight:500; background:var(--soft); padding:3px 7px; border-radius:4px; color:var(--muted); }
+.emoji { display:inline-block; margin-right:.45em; font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif; font-size:.9em; font-weight:normal; letter-spacing:0; }
+.entry h3 { display:flex; align-items:flex-start; gap:.4em; }
+.entry h3 .emoji { flex:0 0 auto; margin:0; }
+.entry h3 [data-i18n] { min-width:0; }
 h3 { margin:0; font-size:22px; font-weight:600; line-height:1.45; letter-spacing:-.02em; }
 .entry-meta { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:10px; }
 .date { font-size:13px; color:var(--muted); }
@@ -138,7 +142,7 @@ h3 { margin:0; font-size:22px; font-weight:600; line-height:1.45; letter-spacing
   .toolbar { margin-top:22px; gap:6px; }
   .tool-link { min-height:44px; padding:8px; font-size:13px; }
   .hero-cta { margin-top:23px; }
-  .section-nav { gap:28px; }
+  .section-nav { gap:16px; }
   .section-nav a { font-size:14px; }
   .container { padding:30px 20px 40px; }
   .container > section + section { margin-top:44px; }
@@ -159,7 +163,7 @@ h3 { margin:0; font-size:22px; font-weight:600; line-height:1.45; letter-spacing
   body { font-size:10pt; }
   .hero { background:none; }
   .hero-inner { display:block; padding:0 0 15px !important; }
-  .portrait-wrap,.toolbar,.hero-cta,.eyebrow,.section-nav,.skip-link,.site-footer,.section-count,.media-gallery { display:none !important; }
+  .portrait-wrap,.toolbar,.hero-cta,.eyebrow,.section-nav,.skip-link,.site-footer,.section-count,.media-gallery,.emoji { display:none !important; }
   h1,.cv-page h1 { font-size:26pt; margin-bottom:10px; }
   .hero-inner::after { content:"blingsun@163.com · github.com/Bling-sun"; font-size:9pt; }
   .container { padding:15px 0 0; }

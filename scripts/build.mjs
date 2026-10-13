@@ -18,6 +18,9 @@ const icon = name => `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" st
 
 function build(cv = false) {
   const translations = {};
+  const emoji = symbol => cv ? '' : `<span class="emoji" aria-hidden="true">${symbol}</span>`;
+  const sectionEmoji = { projects: '🛠️', papers: '📄', awards: '🏆', skills: '💻' };
+  const entryEmoji = { tea: '🍵', sorting: '📦', navigation: '📍', 'multi-agent': '🤝', leco: '🎯', ucon: '🛡️' };
   const text = (value, key, tag = 'span', attrs = '') => {
     if (typeof value === 'string') return `<${tag}${attrs}>${escape(value)}</${tag}>`;
     translations[key] = value;
@@ -62,7 +65,7 @@ function build(cv = false) {
   const article = (entry, type, index) => {
     const key = `${type}.${index}`;
     const publication = type === 'paper';
-    const head = `<div class="entry-heading">${text(entry.title, `${key}.title`, 'h3')}
+    const head = `<div class="entry-heading"><h3>${emoji(entryEmoji[entry.id] || '🔬')}${text(entry.title, `${key}.title`)}</h3>
       <div class="entry-meta">${publication ? `<span class="venue">${escape(entry.venue)}</span>${text(entry.status, `${key}.status`, 'span', ` class="status ${entry.statusType}"`)}` : text(entry.date, `${key}.date`, 'span', ' class="date"')}</div></div>`;
     const description = text(entry.description, `${key}.description`, 'p');
     return `<article class="entry ${publication ? 'paper' : 'project'}${!cv ? ' has-media' : ''}" id="${entry.id}">
@@ -76,10 +79,10 @@ function build(cv = false) {
       </div>${media(entry, key)}</article>`;
   };
 
-  const section = (id, en, zh, body, count) => `<section id="${id}" aria-labelledby="${id}-heading"><div class="section-heading">${ui(en, zh, `heading.${id}`, 'h2', ` id="${id}-heading"`)}${count ? `<span class="section-count">${String(count).padStart(2, '0')}</span>` : ''}</div>${body}</section>`;
+  const section = (id, en, zh, body, count) => `<section id="${id}" aria-labelledby="${id}-heading"><div class="section-heading"><h2 id="${id}-heading">${emoji(sectionEmoji[id])}${ui(en, zh, `heading.${id}`)}</h2>${count ? `<span class="section-count">${String(count).padStart(2, '0')}</span>` : ''}</div>${body}</section>`;
   const bio = content.bio.map((p, i) => text(p, `bio.${i}`, 'p')).join('');
   const awards = `<ul class="awards-list">${content.awards.map((award, i) => text(award, `award.${i}`, 'li')).join('')}</ul>`;
-  const skills = `<dl class="skills-list">${content.skills.map((skill, i) => `<div>${text(skill.label, `skill.${i}.label`, 'dt')}<dd>${escape(skill.detail)}</dd></div>`).join('')}</dl>`;
+  const skills = `<dl class="skills-list">${content.skills.map((skill, i) => `<div><dt>${emoji(['📍', '🤖', '👁️', '💻'][i])}${text(skill.label, `skill.${i}.label`)}</dt><dd>${escape(skill.detail)}</dd></div>`).join('')}</dl>`;
   const name = text(content.name, 'name', 'h1');
   const role = text(content.role, 'role', 'p', ' class="role"');
   const interests = text(content.interests, 'interests', 'p', ' class="interests"');
@@ -127,9 +130,9 @@ function build(cv = false) {
 
     </div>
   </header>
-  ${!cv ? `<nav class="section-nav" aria-label="Sections">${nav.map(([id, en, zh]) => link(`#${id}`, ui(en, zh, `nav.${id}`))).join('')}</nav>` : ''}
+  ${!cv ? `<nav class="section-nav" aria-label="Sections">${nav.map(([id, en, zh]) => link(`#${id}`, emoji(sectionEmoji[id]) + ui(en, zh, `nav.${id}`))).join('')}</nav>` : ''}
   <main class="container" id="main">
-    <section class="profile" aria-labelledby="about-heading">${ui(cv ? 'Profile' : 'About Me', '个人简介', 'heading.about', 'h2', ' id="about-heading"')}${bio}</section>
+    <section class="profile" aria-labelledby="about-heading"><h2 id="about-heading">${emoji('👋')}${ui(cv ? 'Profile' : 'About Me', '个人简介', 'heading.about')}</h2>${bio}</section>
     ${section('projects', 'Projects', '项目', `<div class="project-grid">${content.projects.map((p, i) => article(p, 'project', i)).join('')}</div>`, content.projects.length)}
     ${section('papers', 'Papers', '论文', content.papers.map((p, i) => article(p, 'paper', i)).join('') + ui('Additional research materials will be linked as they become public.', '更多研究资料将在公开后补充链接。', 'papers.note', 'p', ' class="section-note"'), content.papers.length)}
     ${section('awards', 'Competition & Awards', '竞赛与荣誉', awards)}
