@@ -227,7 +227,21 @@
         "code": null,
         "video": null
       },
-      "media": []
+      "media": [
+        {
+          "type": "video",
+          "src": "assets/demos/tea-preparation-2x.mp4",
+          "poster": "assets/demos/tea-preparation-2x.jpg",
+          "alt": {
+            "en": "Robot performing a tea preparation task",
+            "zh": "机器人茶艺操作演示"
+          },
+          "caption": {
+            "en": "Tea preparation · 2× speed",
+            "zh": "茶艺操作 · 2 倍速"
+          }
+        }
+      ]
     },
     {
       "id": "sorting",
@@ -260,7 +274,21 @@
         "code": null,
         "video": null
       },
-      "media": []
+      "media": [
+        {
+          "type": "video",
+          "src": "assets/demos/parcel-sorting-2x.mp4",
+          "poster": "assets/demos/parcel-sorting-2x.jpg",
+          "alt": {
+            "en": "Robot sorting parcels in a real-world demonstration",
+            "zh": "机器人包裹分类实机演示"
+          },
+          "caption": {
+            "en": "Parcel sorting · 2× speed",
+            "zh": "包裹分类 · 2 倍速"
+          }
+        }
+      ]
     },
     {
       "id": "navigation",
@@ -293,7 +321,33 @@
         "code": null,
         "video": null
       },
-      "media": []
+      "media": [
+        {
+          "type": "video",
+          "src": "assets/demos/warehouse-navigation.mp4",
+          "poster": "assets/demos/warehouse-navigation.jpg",
+          "alt": {
+            "en": "Real-world robot navigation demonstration",
+            "zh": "机器人导航实机演示"
+          },
+          "caption": {
+            "en": "Navigation demo",
+            "zh": "导航演示"
+          }
+        },
+        {
+          "type": "image",
+          "src": "assets/demos/warehouse-map.png",
+          "alt": {
+            "en": "Warehouse point-cloud map with mapped object annotations",
+            "zh": "仓库点云地图及目标标注"
+          },
+          "caption": {
+            "en": "Mapping result",
+            "zh": "建图结果"
+          }
+        }
+      ]
     },
     {
       "id": "multi-agent",

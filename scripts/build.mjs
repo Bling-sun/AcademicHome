@@ -1,10 +1,12 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const content = JSON.parse(await readFile(path.join(root, 'content.json'), 'utf8'));
 const base = 'https://bling-sun.github.io/MyHomepage/';
+const styleVersion = createHash('sha256').update(await readFile(path.join(root, 'assets/styles.css'))).digest('hex').slice(0, 12);
 const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const icons = {
   github: '<path d="M9 19c-4.3 1.3-4.3-2.2-6-2.7M15 22v-3.9a3.4 3.4 0 0 0-1-2.7c3.3-.4 6.8-1.6 6.8-7.3a5.7 5.7 0 0 0-1.5-4A5.3 5.3 0 0 0 19.2.2S18-.2 15 1.7a13.5 13.5 0 0 0-7 0C5-.2 3.8.2 3.8.2a5.3 5.3 0 0 0-.1 3.9 5.7 5.7 0 0 0-1.5 4c0 5.7 3.5 6.9 6.8 7.3a3.4 3.4 0 0 0-1 2.7V22"/>',
@@ -112,7 +114,7 @@ function build(cv = false) {
   <meta property="og:image" content="${base}assets/portrait.jpg">
   <link rel="canonical" href="${base}${cv ? 'cv.html' : ''}">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/styles.css">
+  <link rel="stylesheet" href="assets/styles.css?v=${styleVersion}">
   <title>Bing Sun${cv ? ' — CV' : ' | Robotics & Embodied AI'}</title>
   <script src="assets/main.js" defer></script>
   <script type="application/ld+json">${JSON.stringify(person).replace(/</g, '\\u003c')}</script>

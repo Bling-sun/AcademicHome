@@ -71,3 +71,5 @@ Projects and papers accept a `media` array. An empty array reserves a media pane
 Use `type: "image"` for PNG/JPG/WebP/SVG or `type: "gif"` for an original animated GIF. GIFs and MP4s load on demand when Play demo is pressed. Videos provide native pause, timeline, and fullscreen controls; selecting another scene pauses the previous video. Images load lazily with reserved display space. Prefer web-compressed MP4 + a JPEG poster to large GIFs. A media error presents a retry message. Only publish assets you intend to make public.
 
 UCON and LECO include web-optimized copies of the supplied experimental videos; source files remain unchanged. Each scene preserves the full duration. The interface supports English/Chinese, light/dark themes, mobile layouts, keyboard focus, and reduced motion. Media are omitted from the printable CV. Projects precede papers; Education has been removed from both pages.
+
+The tea preparation and parcel sorting demos are encoded at 2x speed (including audio where present), with no scene cuts. Navigation plays at its original speed and shares a gallery with the original mapping image. Captions indicate accelerated playback.
