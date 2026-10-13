@@ -123,7 +123,7 @@ function build(cv = false) {
         ${name}${role}${interests}${toolbar}
         ${!cv ? link('#projects', `${ui('Explore my work', '探索我的项目', 'hero.explore')}<span aria-hidden="true">↗</span>`, ' class="hero-cta"') : ''}
       </div>
-      <div class="portrait-wrap"><img class="portrait" src="assets/portrait.jpg" alt="Bing Sun" width="128" height="154"><span class="portrait-caption">DALIAN · CHINA</span></div>
+      <div class="portrait-wrap"><img class="portrait" src="assets/portrait.jpg" alt="Bing Sun" width="128" height="154"><span class="portrait-caption">SHENZHEN · CHINA</span></div>
 
     </div>
   </header>
