@@ -1,8 +1,8 @@
-# Bing Sun's Homepage
+# AcademicHome
 
 Personal academic homepage for **Bing Sun (孙冰)**, based on the supplied CV. The layout is inspired by [Yue Lin's homepage](https://yue-0.github.io/); all site code is newly written.
 
-Public URL: **https://bling-sun.github.io/Bling.github.io/**
+Public URL: **https://bling-sun.github.io/AcademicHome/**
 
 ## Edit the content
 
@@ -38,7 +38,7 @@ Open http://127.0.0.1:8000/. No dependencies or build framework are required.
 
 ## GitHub Pages
 
-Serve from the `main` branch and the repository root (`/`). The repository name is `Bling.github.io`, while the account is `Bling-sun`, so GitHub serves this as a project site under `/Bling.github.io/`. All asset links are relative and work at this path.
+Serve from the `main` branch and the repository root (`/`). The repository name is `AcademicHome`, while the account is `Bling-sun`, so GitHub serves this as a project site under `/AcademicHome/`. All asset links are relative and work at this path.
 
 To update the website, regenerate the HTML, commit the edited files, and push to `main`. GitHub Pages publishes the new version automatically.
 
