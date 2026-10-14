@@ -11,6 +11,10 @@ const styleVersion = createHash('sha256').update(await readFile(path.join(root, 
 const scriptVersion = createHash('sha256').update(await readFile(path.join(root, 'assets/main.js'))).digest('hex').slice(0, 12);
 const escape = value => String(value).replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 const icons = {
+  projects: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  papers: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"/><path d="M14 3v6h6M8 13h8M8 17h5"/>',
+  awards: '<path d="M8 3h8v6a4 4 0 0 1-8 0ZM8 5H4v3a4 4 0 0 0 4 4M16 5h4v3a4 4 0 0 1-4 4M12 13v5M8 21h8M9 18h6v3H9Z"/>',
+  skills: '<path d="m8 7-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/>',
   github: '<path d="M9 19c-4.3 1.3-4.3-2.2-6-2.7M15 22v-3.9a3.4 3.4 0 0 0-1-2.7c3.3-.4 6.8-1.6 6.8-7.3a5.7 5.7 0 0 0-1.5-4A5.3 5.3 0 0 0 19.2.2S18-.2 15 1.7a13.5 13.5 0 0 0-7 0C5-.2 3.8.2 3.8.2a5.3 5.3 0 0 0-.1 3.9 5.7 5.7 0 0 0-1.5 4c0 5.7 3.5 6.9 6.8 7.3a3.4 3.4 0 0 0-1 2.7V22"/>',
   mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 6 9 7 9-7"/>',
   cv: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h6"/>',
@@ -134,7 +138,7 @@ function build(cv = false) {
 
     </div>
   </header>
-  ${!cv ? `<nav class="section-nav" aria-label="Sections">${nav.map(([id, en, zh]) => link(`#${id}`, emoji(sectionEmoji[id]) + ui(en, zh, `nav.${id}`))).join('')}</nav>` : ''}
+  ${!cv ? `<nav class="section-nav" aria-label="Sections"><div class="section-nav-inner">${nav.map(([id, en, zh]) => link(`#${id}`, icon(id) + ui(en, zh, `nav.${id}`))).join('')}</div></nav>` : ''}
   <main class="container" id="main">
     <section class="profile" aria-labelledby="about-heading"><h2 id="about-heading">${emoji('👋')}${ui(cv ? 'Profile' : 'About Me', '个人简介', 'heading.about')}</h2>${bio}</section>
     ${section('projects', 'Projects', '项目', `<div class="project-grid">${content.projects.map((p, i) => article(p, 'project', i)).join('')}</div>`, content.projects.length)}

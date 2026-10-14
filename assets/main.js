@@ -159,6 +159,7 @@
     scrollPending = false;
     let active = -1;
     sections.forEach((section, index) => { if (section.getBoundingClientRect().top <= 150) active = index; });
+    if (active >= 0 && window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) active = sections.length - 1;
     navLinks.forEach((link, index) => { if (index === active) link.setAttribute('aria-current', 'location'); else link.removeAttribute('aria-current'); });
   };
   window.addEventListener('scroll', () => { if (!scrollPending) { scrollPending = true; requestAnimationFrame(updateSection); } }, {passive:true});
