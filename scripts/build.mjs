@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const content = JSON.parse(await readFile(path.join(root, 'content.json'), 'utf8'));
+const emails = [content.email, ...(content.additionalEmails || [])];
 const base = 'https://bling-sun.github.io/MyHomepage/';
 const styleVersion = createHash('sha256').update(await readFile(path.join(root, 'assets/styles.css'))).digest('hex').slice(0, 12);
 const scriptVersion = createHash('sha256').update(await readFile(path.join(root, 'assets/main.js'))).digest('hex').slice(0, 12);
@@ -99,7 +100,7 @@ function build(cv = false) {
     <button class="tool-link theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme">${icon('theme')}</button>
     ${cv ? `<button class="tool-link" id="print-cv" type="button">${icon('print')}${ui('Print / PDF', '打印 / PDF', 'ui.print')}</button>` : ''}
   </div>`;
-  const person = { '@context': 'https://schema.org', '@type': 'Person', name: 'Bing Sun', alternateName: '孙冰', url: base, image: `${base}assets/portrait.jpg`, email: content.email, sameAs: [content.github], affiliation: { '@type': 'CollegeOrUniversity', name: 'Dalian University of Technology' }, knowsAbout: ['Robot Navigation', 'Motion Planning', 'Vision–Language–Action Models'] };
+  const person = { '@context': 'https://schema.org', '@type': 'Person', name: 'Bing Sun', alternateName: '孙冰', url: base, image: `${base}assets/portrait.jpg`, email: emails, sameAs: [content.github], affiliation: { '@type': 'CollegeOrUniversity', name: 'Dalian University of Technology' }, knowsAbout: ['Robot Navigation', 'Motion Planning', 'Vision–Language–Action Models'] };
 
   return `<!doctype html>
 <html lang="en">
@@ -141,13 +142,15 @@ function build(cv = false) {
     ${section('awards', 'Competition & Awards', '竞赛与荣誉', awards)}
     ${section('skills', 'Technical Skills', '专业技能', skills)}
   </main>
-  <footer class="site-footer"><div><span>© 2026 </span>${text(content.name, 'footer.name')}<span class="footer-dot" aria-hidden="true">·</span>${link(`mailto:${content.email}`, escape(content.email), ' data-email-contact aria-haspopup="dialog"')}</div><div class="updated">${ui('Last updated: October 2026', '最近更新：2026 年 10 月', 'footer.updated')}</div></footer>
+  <footer class="site-footer"><div><span>© 2026 </span>${text(content.name, 'footer.name')}<span class="footer-dot" aria-hidden="true">·</span>${emails.map(email => link(`mailto:${email}`, escape(email), ' data-email-contact aria-haspopup="dialog"')).join('<span class="footer-dot" aria-hidden="true">·</span>')}</div><div class="updated">${ui('Last updated: October 2026', '最近更新：2026 年 10 月', 'footer.updated')}</div></footer>
   <dialog class="email-dialog" id="email-contact" aria-labelledby="email-title">
     <div class="email-heading">${ui('Get in touch', '联系我', 'contact.title', 'h2', ' id="email-title"')}<form method="dialog"><button class="tool-link" type="submit">${ui('Close', '关闭', 'contact.close')}</button></form></div>
     ${ui('Copy my address or open your email app to write to me.', '复制邮箱地址，或打开邮件应用给我写信。', 'contact.description', 'p')}
-    ${ui('Email address', '邮箱地址', 'contact.address', 'label', ' for="email-address"')}
-    <input id="email-address" type="text" value="${escape(content.email)}" readonly spellcheck="false">
-    <div class="email-actions"><button class="tool-link" type="button" id="copy-email">${ui('Copy email', '复制邮箱', 'contact.copy')}</button>${link(`mailto:${content.email}`, ui('Open email app', '打开邮件应用', 'contact.open'), ' class="tool-link"')}</div>
+    ${emails.map((email, i) => `<div class="email-option">
+      ${ui(`Email address ${i + 1}`, `邮箱地址 ${i + 1}`, `contact.address.${i}`, 'label', ` for="email-address-${i}"`)}
+      <input id="email-address-${i}" type="text" value="${escape(email)}" readonly spellcheck="false">
+      <div class="email-actions"><button class="tool-link" type="button" data-copy-email="email-address-${i}">${ui('Copy email', '复制邮箱', `contact.copy.${i}`)}</button>${link(`mailto:${email}`, ui('Open email app', '打开邮件应用', `contact.open.${i}`), ' class="tool-link"')}</div>
+    </div>`).join('')}
     <p class="email-status" id="email-status" role="status" aria-live="polite"></p>
   </dialog>
   <script id="translations" type="application/json">${JSON.stringify(translations).replace(/</g, '\\u003c')}</script>

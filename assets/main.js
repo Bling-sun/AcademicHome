@@ -50,7 +50,6 @@
   renderLanguage();
 
   const emailDialog = document.getElementById('email-contact');
-  const emailAddress = document.getElementById('email-address');
   const emailStatus = document.getElementById('email-status');
   for (const link of document.querySelectorAll('[data-email-contact]')) {
     link.addEventListener('click', event => {
@@ -60,10 +59,11 @@
       emailDialog.showModal();
     });
   }
-  document.getElementById('copy-email')?.addEventListener('click', async () => {
+  for (const button of document.querySelectorAll('[data-copy-email]')) button.addEventListener('click', async () => {
+    const emailAddress = document.getElementById(button.dataset.copyEmail);
     try {
       await navigator.clipboard.writeText(emailAddress.value);
-      emailStatus.textContent = language === 'zh' ? '已复制邮箱地址。' : 'Email address copied.';
+      emailStatus.textContent = `${language === 'zh' ? '已复制：' : 'Copied: '}${emailAddress.value}`;
     } catch {
       emailAddress.focus();
       emailAddress.select();
