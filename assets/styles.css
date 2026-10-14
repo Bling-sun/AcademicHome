@@ -40,8 +40,8 @@ h1 { font-size:38px; line-height:1.2; letter-spacing:-.025em; font-weight:650; m
 .hero-cta:hover { text-decoration:none; }
 .hero-cta span:last-child { transition:transform .2s; }
 .hero-cta:hover span:last-child { transform:translate(3px,-3px); }
-.section-nav { position:sticky; top:0; z-index:5; display:flex; justify-content:center; border-block:1px solid var(--line); background:var(--surface); padding:10px 20px; box-shadow:0 4px 16px #16386205; }
-.section-nav-inner { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; width:100%; max-width:620px; padding:4px; border:1px solid var(--line); border-radius:14px; background:var(--bg); }
+.section-nav { position:sticky; top:0; z-index:5; display:flex; justify-content:center; border-block:1px solid var(--line); background:var(--surface); padding:10px 40px; box-shadow:0 4px 16px #16386205; }
+.section-nav-inner { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:4px; width:100%; max-width:1160px; padding:4px; border:1px solid var(--line); border-radius:14px; background:var(--bg); }
 .section-nav a { display:flex; align-items:center; justify-content:center; gap:9px; min-width:0; min-height:44px; padding:9px 12px; border-radius:10px; font-size:15px; line-height:1.4; font-weight:600; white-space:nowrap; color:var(--muted); transition:background .18s,color .18s,box-shadow .18s; }
 .section-nav svg { flex:0 0 auto; width:18px; height:18px; }
 .section-nav a:hover { color:var(--accent); background:var(--soft); text-decoration:none; }
@@ -134,6 +134,7 @@ h3 { margin:0; font-size:22px; font-weight:600; line-height:1.45; letter-spacing
   .portrait { height:126px; }
   .toolbar-divider { display:none; }
   .container { padding:35px 24px 45px; }
+  .section-nav { padding-inline:24px; }
   .profile { grid-template-columns:145px 1fr; gap:0 25px; }
   .entry.has-media { grid-template-columns:1fr; }
   .media-gallery { padding:20px; border-left:0; border-top:1px solid var(--line); }
@@ -160,7 +161,7 @@ h3 { margin:0; font-size:22px; font-weight:600; line-height:1.45; letter-spacing
   .toolbar { margin-top:22px; gap:6px; }
   .tool-link { min-height:44px; padding:8px; font-size:13px; }
   .hero-cta { margin-top:23px; }
-  .section-nav { padding:8px 16px; }
+  .section-nav { padding:8px 20px; }
   .section-nav-inner { gap:3px; border-radius:12px; }
   .section-nav a { flex-direction:column; gap:4px; min-height:58px; padding:7px 3px; font-size:12px; border-radius:8px; }
   .section-nav svg { width:18px; height:18px; }
