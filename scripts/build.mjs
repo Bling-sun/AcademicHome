@@ -6,6 +6,7 @@ import { createHash } from 'node:crypto';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const content = JSON.parse(await readFile(path.join(root, 'content.json'), 'utf8'));
 const emails = [content.email, ...(content.additionalEmails || [])];
+const mailWebUrl = email => email.endsWith('@163.com') ? 'https://mail.163.com/' : `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`;
 const base = 'https://bling-sun.github.io/MyHomepage/';
 const styleVersion = createHash('sha256').update(await readFile(path.join(root, 'assets/styles.css'))).digest('hex').slice(0, 12);
 const scriptVersion = createHash('sha256').update(await readFile(path.join(root, 'assets/main.js'))).digest('hex').slice(0, 12);
@@ -98,7 +99,7 @@ function build(cv = false) {
   const toolbar = `<div class="toolbar" aria-label="Links and display options">
     ${cv ? link('./', ui('Homepage', '主页', 'ui.home'), ' class="tool-link"') : link('assets/Bing-Sun-CV.pdf', `${icon('cv')}${ui('Download CV', '下载简历', 'ui.cv')}`, ' class="tool-link" id="cv-download" download="Bing-Sun-CV.pdf"')}
     ${link(content.github, `${icon('github')}<span>GitHub</span>`, ' class="tool-link" target="_blank" rel="noopener noreferrer"')}
-    ${link(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(content.email)}`, `${icon('mail')}${ui('Email', '邮箱', 'ui.email')}`, ' class="tool-link" data-email-contact aria-haspopup="dialog"')}
+    ${link(mailWebUrl(content.email), `${icon('mail')}${ui('Email', '邮箱', 'ui.email')}`, ' class="tool-link" data-email-contact aria-haspopup="dialog"')}
     <span class="toolbar-divider" aria-hidden="true"></span>
     <button class="tool-link" id="language-toggle" type="button" aria-label="切换为中文">${icon('translate')}<span id="language-label">中文</span></button>
     <button class="tool-link theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme">${icon('theme')}</button>
@@ -146,14 +147,14 @@ function build(cv = false) {
     ${section('awards', 'Competition & Awards', '竞赛与荣誉', awards)}
     ${section('skills', 'Technical Skills', '专业技能', skills)}
   </main>
-  <footer class="site-footer"><div><span>© 2026 </span>${text(content.name, 'footer.name')}<span class="footer-dot" aria-hidden="true">·</span>${emails.map(email => link(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`, escape(email), ' data-email-contact aria-haspopup="dialog"')).join('<span class="footer-dot" aria-hidden="true">·</span>')}</div><div class="updated">${ui('Last updated: October 2026', '最近更新：2026 年 10 月', 'footer.updated')}</div></footer>
+  <footer class="site-footer"><div><span>© 2026 </span>${text(content.name, 'footer.name')}<span class="footer-dot" aria-hidden="true">·</span>${emails.map(email => link(mailWebUrl(email), escape(email), ' data-email-contact aria-haspopup="dialog"')).join('<span class="footer-dot" aria-hidden="true">·</span>')}</div><div class="updated">${ui('Last updated: October 2026', '最近更新：2026 年 10 月', 'footer.updated')}</div></footer>
   <dialog class="email-dialog" id="email-contact" aria-labelledby="email-title">
     <div class="email-heading">${ui('Get in touch', '联系我', 'contact.title', 'h2', ' id="email-title"')}<form method="dialog"><button class="tool-link" type="submit">${ui('Close', '关闭', 'contact.close')}</button></form></div>
-    ${ui('Copy either address or compose a message in Gmail on the web. Gmail sign-in may be required.', '复制任一邮箱地址，或通过 Gmail 网页写信；未登录时需先登录 Gmail。', 'contact.description', 'p')}
+    ${ui('Copy a recipient address and write from your preferred email service. For 163 Mail, paste the address into a new message after signing in.', '复制收件地址，用你常用的邮箱写信。网易邮箱需登录后新建邮件并粘贴地址。', 'contact.description', 'p')}
     ${emails.map((email, i) => `<div class="email-option">
       ${ui(`Email address ${i + 1}`, `邮箱地址 ${i + 1}`, `contact.address.${i}`, 'label', ` for="email-address-${i}"`)}
       <input id="email-address-${i}" type="text" value="${escape(email)}" readonly spellcheck="false">
-      <div class="email-actions"><button class="tool-link" type="button" data-copy-email="email-address-${i}">${ui('Copy email', '复制邮箱', `contact.copy.${i}`)}</button>${link(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`, ui('Compose in Gmail ↗', 'Gmail 网页写信 ↗', `contact.open.${i}`), ' class="tool-link" target="_blank" rel="noopener noreferrer"')}</div>
+      <div class="email-actions"><button class="tool-link" type="button" data-copy-email="email-address-${i}">${ui('Copy email', '复制邮箱', `contact.copy.${i}`)}</button>${link(mailWebUrl(email), ui(email.endsWith('@163.com') ? 'Open 163 Mail ↗' : 'Compose in Gmail ↗', email.endsWith('@163.com') ? '打开网易邮箱 ↗' : 'Gmail 网页写信 ↗', `contact.open.${i}`), ' class="tool-link" target="_blank" rel="noopener noreferrer"')}</div>
     </div>`).join('')}
     <p class="email-status" id="email-status" role="status" aria-live="polite"></p>
   </dialog>
